@@ -69,7 +69,7 @@ if [ -d "$DOC_ROOT/bitrix" ]; then
         echo "Дата ядра (Главный модуль): $BX_DATE"
     fi
 
-    echo "Считаем объем файлов (без кэша, чтобы не подвесить диск)..."
+    echo "Считаем объем файлов (без кэша)..."
     # ionice -c 3 и nice -n 19 защищают от 100% I/O Wait, о котором вы говорили ранее
     ionice -c 3 nice -n 19 du -sh --exclude='bitrix/cache' --exclude='bitrix/managed_cache' --exclude='bitrix/html_pages' "$DOC_ROOT" 2>/dev/null
     
