@@ -45,7 +45,7 @@ df -hT | grep -vE 'tmpfs|udev|loop|overlay' | awk '{printf "%-20s %-10s %-10s %-
 # 5. Поиск корня сайта
 echo -e "\n[5. АНАЛИЗ ПОРТАЛА BITRIX]"
 # Массив частых путей. Скрипт проверит их по очереди.
-SITE_PATHS=("/home/bitrix/www" "/home/bitrix/ext_www" "/var/www/site1" "/var/www/html/site1" "/var/www/html" "/var/www/bitrix")
+SITE_PATHS=("/home/bitrix/www" "/home/bitrix/ext_www" "/var/www/site1/public_html/" "/var/www/html/site1" "/var/www/html" "/var/www/bitrix")
 DOC_ROOT=""
 
 for p in "${SITE_PATHS[@]}"; do

@@ -10,20 +10,55 @@ define("NOT_CHECK_PERMISSIONS",true);
 define("BX_NO_ACCELERATOR_RESET", true);
 define("CHK_EVENT", true);
 
-// Подключаем ядро
+// Подключаем минимальное ядро
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/update_client.php");
 
 $errorMessage = "";
+// Запрашиваем данные у серверов 1С-Битрикс
 $arUpdates = CUpdateClient::GetUpdatesList($errorMessage, "ru", "Y");
 
 if ($errorMessage) {
     echo "Ошибка получения обновлений: " . $errorMessage . "\n";
-} else {
-    $modules = isset($arUpdates["MODULES"][0]["#"]["MODULE"]) ? count($arUpdates["MODULES"][0]["#"]["MODULE"]) : 0;
-    $langs = isset($arUpdates["LANGS"][0]["#"]["INST"]) ? count($arUpdates["LANGS"][0]["#"]["INST"]) : 0;
+} elseif (is_array($arUpdates)) {
     
+    // 1. Проверка на необходимость обновления системы SiteUpdate
+    $siteUpdateRequired = false;
+    if (isset($arUpdates["UPDATE_SYSTEM"])) {
+        // Защита от разного формата парсинга XML Битриксом
+        if (is_scalar($arUpdates["UPDATE_SYSTEM"]) && $arUpdates["UPDATE_SYSTEM"] == "Y") {
+            $siteUpdateRequired = true;
+        } elseif (is_array($arUpdates["UPDATE_SYSTEM"]) && isset($arUpdates["UPDATE_SYSTEM"][0]["#"]) && $arUpdates["UPDATE_SYSTEM"][0]["#"] == "Y") {
+            $siteUpdateRequired = true;
+        }
+    }
+
+    if ($siteUpdateRequired) {
+        echo "[!] ВНИМАНИЕ: Выпущено обновление системы SiteUpdate! Его необходимо установить до модулей.\n";
+    }
+
+    // 2. Подсчет модулей
+    $modules = 0;
+    if (isset($arUpdates["MODULES"][0]["#"]["MODULE"])) {
+        $modules = count($arUpdates["MODULES"][0]["#"]["MODULE"]);
+    }
+    
+    // 3. Подсчет языков
+    $langs = 0;
+    if (isset($arUpdates["LANGS"][0]["#"]["INST"])) {
+        $langs = count($arUpdates["LANGS"][0]["#"]["INST"]);
+    }
+
+    // Вывод результатов
     echo "Доступно обновлений модулей: " . $modules . "\n";
     echo "Доступно обновлений языков: " . $langs . "\n";
+    
+    // 4. Бонус: Проверка срока действия лицензии
+    if (isset($arUpdates["CLIENT"][0]["@"]["DATE_TO"])) {
+        echo "Лицензия активна до: " . $arUpdates["CLIENT"][0]["@"]["DATE_TO"] . "\n";
+    }
+
+} else {
+    echo "Сервер обновлений Битрикс вернул пустой ответ.\n";
 }
 ?>
