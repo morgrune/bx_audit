@@ -80,3 +80,5 @@ else
 fi
 
 echo "==================================================="
+
+[ -f "check_bx_updates.php" ] && [ ! -z "$DOC_ROOT" ] && php check_bx_updates.php "$DOC_ROOT"
