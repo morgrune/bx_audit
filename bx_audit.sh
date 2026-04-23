@@ -39,8 +39,7 @@ fi
 
 # 4. Дисковое пространство (только реальные разделы)
 echo -e "\n[4. СОСТОЯНИЕ ДИСКОВ (Свободно)]"
-df -hT | grep -vE 'tmpfs|udev|loop|overlay' | awk '{printf "%-20s %-10s %-10s %-10s %-10s\n", $1, $2, $3, $4, $6}' | head -n 1
-df -hT | grep -vE 'tmpfs|udev|loop|overlay' | awk '{printf "%-20s %-10s %-10s %-10s %-10s\n", $1, $3, $4, $5, $7}' | grep -v 'Size'
+df -hT | grep -vE 'tmpfs|udev|loop|overlay' | awk '{printf "%-20s %-10s %-10s %-10s %-10s\n", $1, $2, $3, $4, $6}'
 
 # 5. Поиск корня сайта
 echo -e "\n[5. АНАЛИЗ ПОРТАЛА BITRIX]"
